@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlogCraft - Modern Blog Platform</title>
+    <meta name="description" content="A modern, clean blog platform with content management, user authentication, and commenting system. Fast, SEO-optimized, and mobile-responsive.">
+    <meta name="keywords" content="blog, blogging platform, content management, modern design, responsive, writing, publishing, comments">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="BlogCraft - Modern Blog Platform">
+    <meta property="og:description" content="A modern, clean blog platform with content management, user authentication, and commenting system.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="BlogCraft - Modern Blog Platform">
+    <meta property="twitter:description" content="A modern, clean blog platform with content management and commenting system.">
+    <meta property="twitter:image" content="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✍️</text></svg>" />
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --secondary: #6b7280;
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius: 8px;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--surface);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Utility Classes */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: var(--radius); border: none; cursor: pointer; font-weight: 500; transition: all 0.2s; text-decoration: none; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: var(--border-light); }
+        .btn-ghost { background: transparent; color: var(--text-light); }
+        .btn-ghost:hover { background: var(--border-light); }
+        .card { background: white; border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); }
+        .badge { display: inline-block; padding: 0.25rem 0.75rem; font-size: 0.875rem; font-weight: 500; border-radius: 9999px; background: var(--primary-light); color: var(--primary); }
+        .input { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); font-size: 1rem; }
+        .input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1); }
+        .textarea { resize: vertical; min-height: 100px; }
+        .grid { display: grid; }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .gap-8 { gap: 2rem; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .justify-center { justify-content: center; }
+        .space-x-2 > * + * { margin-left: 0.5rem; }
+        .space-x-4 > * + * { margin-left: 1rem; }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .space-y-6 > * + * { margin-top: 1.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mt-8 { margin-top: 2rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+        .py-16 { padding-top: 4rem; padding-bottom: 4rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .text-sm { font-size: 0.875rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-3xl { font-size: 1.875rem; }
+        .text-4xl { font-size: 2.25rem; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+        .text-center { text-align: center; }
+        .text-gray-600 { color: var(--text-light); }
+        .text-primary { color: var(--primary); }
+        .hidden { display: none; }
+        .block { display: block; }
+        .rounded { border-radius: var(--radius); }
+        .rounded-full { border-radius: 9999px; }
+        .shadow { box-shadow: var(--shadow); }
+        .shadow-lg { box-shadow: var(--shadow-lg); }
+        .border-b { border-bottom: 1px solid var(--border); }
+        .w-full { width: 100%; }
+        .h-64 { height: 16rem; }
+        .object-cover { object-fit: cover; }
+        .transition { transition: all 0.2s; }
+        .hover\:shadow-lg:hover { box-shadow: var(--shadow-lg); }
+        .cursor-pointer { cursor: pointer; }
+        .sticky { position: sticky; }
+        .top-0 { top: 0; }
+        .z-50 { z-index: 50; }
+        
+        /* Responsive */
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .md\:flex { display: flex; }
+            .md\:hidden { display: none; }
+            .md\:block { display: block; }
+        }
+        
+        /* Custom Components */
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: var(--shadow);
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--primary-light) 0%, #dbeafe 100%);
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+        
+        .post-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .post-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+        
+        .post-image {
+            width: 100%;
+            height: 12rem;
+            object-fit: cover;
+            background: linear-gradient(135deg, var(--primary-light) 0%, #dbeafe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--text-light);
+        }
+        
+        .avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .toast.error {
+            background: var(--error);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Loading animations */
+        .skeleton {
+            background: linear-gradient(90deg, var(--border-light) 25%, var(--border) 50%, var(--border-light) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: white;
+            font-size: 1rem;
+        }
+        
+        /* Comment styles */
+        .comment {
+            border-left: 2px solid var(--border);
+            padding-left: 1rem;
+            margin-left: 1rem;
+        }
+        
+        .comment-content {
+            background: var(--border-light);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="flex items-center justify-between py-4">
+                    <div class="flex items-center space-x-2">
+                        <span style="font-size: 1.5rem;">✍️</span>
+                        <h1 class="text-2xl font-bold">BlogCraft</h1>
+                    </div>
+                    
+                    <nav class="md:flex items-center space-x-4 hidden">
+                        <a href="#" onclick="showHome()" class="text-gray-600 hover:text-primary transition">Home</a>
+                        <button id="authBtn" onclick="toggleAuth()" class="btn btn-primary">Sign In</button>
+                    </nav>
+                    
+                    <button class="md:hidden" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="content">
+            <!-- Landing Page -->
+            <div id="landing-page">
+                <!-- Hero Section -->
+                <section class="hero">
+                    <div class="container">
+                        <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                            Share Your <span class="text-primary">Stories</span>
+                        </h1>
+                        <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                            A modern blogging platform designed for writers, creators, and thought leaders. 
+                            Create, share, and engage with beautiful, fast-loading content.
+                        </p>
+                        <div class="flex flex-col md:flex-row gap-4 justify-center">
+                            <button onclick="showSignIn()" class="btn btn-primary text-lg px-8 py-4">
+                                Start Writing Today
+                            </button>
+                            <button onclick="scrollToFeatured()" class="btn btn-secondary text-lg px-8 py-4">
+                                Explore Posts
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Featured Posts Preview -->
+                <section id="featured" class="py-16">
+                    <div class="container">
+                        <div class="text-center mb-12">
+                            <h2 class="text-3xl font-bold mb-4">Featured Content</h2>
+                            <p class="text-xl text-gray-600">Discover amazing stories from our community</p>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <div class="post-card">
+                                <div class="post-image">📱</div>
+                                <div class="card">
+                                    <div class="badge mb-4">Web Development</div>
+                                    <h3 class="text-xl font-bold mb-3">Building Modern Web Applications</h3>
+                                    <p class="text-gray-600 mb-4">Learn the fundamentals of modern web development with the latest tools and frameworks.</p>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="avatar">JD</div>
+                                        <div>
+                                            <div class="text-sm font-medium">John Developer</div>
+                                            <div class="text-sm text-gray-600">5 min read</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="post-card">
+                                <div class="post-image">🎨</div>
+                                <div class="card">
+                                    <div class="badge mb-4">Design</div>
+                                    <h3 class="text-xl font-bold mb-3">The Evolution of UI Design</h3>
+                                    <p class="text-gray-600 mb-4">Explore how user interface design has evolved and what trends are shaping the future.</p>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="avatar">SD</div>
+                                        <div>
+                                            <div class="text-sm font-medium">Sarah Designer</div>
+                                            <div class="text-sm text-gray-600">7 min read</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="post-card">
+                                <div class="post-image">🚀</div>
+                                <div class="card">
+                                    <div class="badge mb-4">Productivity</div>
+                                    <h3 class="text-xl font-bold mb-3">Remote Work Best Practices</h3>
+                                    <p class="text-gray-600 mb-4">Discover proven strategies for maintaining productivity while working remotely.</p>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="avatar">MP</div>
+                                        <div>
+                                            <div class="text-sm font-medium">Mike Productivity</div>
+                                            <div class="text-sm text-gray-600">4 min read</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-12">
+                            <button onclick="showSignIn()" class="btn btn-primary">
+                                Sign In to Read More
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Dashboard -->
+            <div id="dashboard" class="hidden">
+                <div class="container py-8">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h1 class="text-3xl font-bold">Dashboard</h1>
+                            <p class="text-gray-600 mt-2">Welcome back, <span id="userName">Writer</span>!</p>
+                        </div>
+                        <button onclick="showCreatePost()" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            New Post
+                        </button>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid md:grid-cols-4 gap-6 mb-8">
+                        <div class="card" style="background: linear-gradient(135deg, #3b82f6, #2563eb); color: white;">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-blue-100 text-sm">Total Posts</p>
+                                    <p class="text-3xl font-bold" id="totalPosts">3</p>
+                                </div>
+                                <i class="fas fa-file-text text-2xl text-blue-200"></i>
+                            </div>
+                        </div>
+
+                        <div class="card" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-green-100 text-sm">Total Views</p>
+                                    <p class="text-3xl font-bold" id="totalViews">1,234</p>
+                                </div>
+                                <i class="fas fa-eye text-2xl text-green-200"></i>
+                            </div>
+                        </div>
+
+                        <div class="card" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white;">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-purple-100 text-sm">Comments</p>
+                                    <p class="text-3xl font-bold" id="totalComments">89</p>
+                                </div>
+                                <i class="fas fa-comment text-2xl text-purple-200"></i>
+                            </div>
+                        </div>
+
+                        <div class="card" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white;">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-orange-100 text-sm">Likes</p>
+                                    <p class="text-3xl font-bold" id="totalLikes">456</p>
+                                </div>
+                                <i class="fas fa-heart text-2xl text-orange-200"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Posts List -->
+                    <div class="card">
+                        <h2 class="text-xl font-bold mb-6">Your Posts</h2>
+                        <div id="userPostsList">
+                            <!-- Posts will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create/Edit Post -->
+            <div id="post-editor" class="hidden">
+                <div class="container py-8">
+                    <div class="flex items-center space-x-4 mb-8">
+                        <button onclick="showDashboard()" class="btn btn-ghost">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Dashboard
+                        </button>
+                        <h1 class="text-3xl font-bold" id="editorTitle">Create New Post</h1>
+                    </div>
+
+                    <div class="card">
+                        <form id="postForm" class="space-y-6">
+                            <div class="form-group">
+                                <label class="label" for="postTitle">Title *</label>
+                                <input type="text" id="postTitle" class="input" placeholder="Enter your post title..." required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="label" for="postExcerpt">Excerpt</label>
+                                <textarea id="postExcerpt" class="input textarea" rows="3" placeholder="A brief summary of your post..."></textarea>
+                                <p class="text-sm text-gray-600 mt-2">This will be shown in post previews.</p>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="form-group">
+                                    <label class="label" for="postCategory">Category</label>
+                                    <select id="postCategory" class="select">
+                                        <option value="">Select a category</option>
+                                        <option value="web-development">Web Development</option>
+                                        <option value="design">Design</option>
+                                        <option value="productivity">Productivity</option>
+                                        <option value="technology">Technology</option>
+                                        <option value="tutorial">Tutorial</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="label" for="postImage">Featured Image URL</label>
+                                    <input type="url" id="postImage" class="input" placeholder="https://example.com/image.jpg">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="label" for="postContent">Content *</label>
+                                <textarea id="postContent" class="input textarea" rows="16" placeholder="Write your post content here..." required></textarea>
+                                <p class="text-sm text-gray-600 mt-2">Write your post content. Line breaks will be preserved.</p>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-6 border-t">
+                                <div class="text-sm text-gray-600" id="wordCount">0 words • 0 min read</div>
+                                
+                                <div class="flex items-center space-x-4">
+                                    <button type="button" onclick="savePost('draft')" class="btn btn-secondary">
+                                        <i class="fas fa-save"></i>
+                                        Save Draft
+                                    </button>
+                                    
+                                    <button type="button" onclick="savePost('published')" class="btn btn-primary">
+                                        <i class="fas fa-eye"></i>
+                                        Publish
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post View -->
+            <div id="post-view" class="hidden">
+                <div class="container py-8">
+                    <article class="card" id="postArticle">
+                        <!-- Post content will be loaded here -->
+                    </article>
+                    
+                    <!-- Comments Section -->
+                    <div class="card mt-8">
+                        <h3 class="text-2xl font-bold mb-6">Comments</h3>
+                        
+                        <div class="mb-8" id="commentForm">
+                            <div class="flex space-x-4">
+                                <div class="avatar">You</div>
+                                <div class="flex-1">
+                                    <textarea id="newComment" class="input textarea" rows="3" placeholder="Write a thoughtful comment..."></textarea>
+                                    <div class="flex justify-end mt-4">
+                                        <button onclick="addComment()" class="btn btn-primary">Post Comment</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="commentsList">
+                            <!-- Comments will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer style="background: #1f2937; color: white; padding: 4rem 1rem;">
+            <div class="container">
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4 flex items-center">
+                            <span style="font-size: 1.5rem; margin-right: 0.5rem;">✍️</span>
+                            BlogCraft
+                        </h3>
+                        <p style="color: #9ca3af; margin-bottom: 1.5rem;">
+                            A modern blogging platform designed for creators who value clean design and powerful functionality.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold mb-4">Platform</h4>
+                        <ul class="space-y-2" style="color: #9ca3af;">
+                            <li><a href="#" class="hover:text-white transition">Features</a></li>
+                            <li><a href="#" class="hover:text-white transition">Pricing</a></li>
+                            <li><a href="#" class="hover:text-white transition">Templates</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold mb-4">Resources</h4>
+                        <ul class="space-y-2" style="color: #9ca3af;">
+                            <li><a href="#" class="hover:text-white transition">Documentation</a></li>
+                            <li><a href="#" class="hover:text-white transition">Help Center</a></li>
+                            <li><a href="#" class="hover:text-white transition">Community</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold mb-4">Company</h4>
+                        <ul class="space-y-2" style="color: #9ca3af;">
+                            <li><a href="#" class="hover:text-white transition">About</a></li>
+                            <li><a href="#" class="hover:text-white transition">Privacy</a></li>
+                            <li><a href="#" class="hover:text-white transition">Terms</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="border-top: 1px solid #374151; margin-top: 3rem; padding-top: 2rem; text-align: center; color: #9ca3af;">
+                    <p>&copy; 2024 BlogCraft. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Application State
+        let currentUser = null;
+        let currentView = 'landing';
+        let posts = [
+            {
+                id: 1,
+                title: "Building Modern Web Applications",
+                slug: "building-modern-web-applications",
+                excerpt: "Learn the fundamentals of modern web development with the latest tools and frameworks.",
+                content: "Modern web development has evolved significantly over the past few years. With the advent of frameworks like React, Vue, and Angular, developers now have powerful tools at their disposal to create interactive and dynamic web applications.\n\nIn this comprehensive guide, we'll explore the key concepts and best practices for building modern web applications. We'll cover topics such as component-based architecture, state management, routing, and performance optimization.\n\nWhether you're a beginner looking to get started or an experienced developer wanting to stay up-to-date with the latest trends, this article will provide valuable insights into the world of modern web development.",
+                category: "Web Development",
+                author: { name: "John Developer", avatar: "JD" },
+                publishedAt: "2024-01-15",
+                readingTime: 5,
+                views: 234,
+                likes: 12,
+                comments: [],
+                status: "published",
+                featuredImage: null
+            },
+            {
+                id: 2,
+                title: "The Evolution of UI Design",
+                slug: "evolution-of-ui-design",
+                excerpt: "Explore how user interface design has evolved and what trends are shaping the future.",
+                content: "User Interface (UI) design has undergone a remarkable transformation since the early days of computing. From command-line interfaces to the intuitive touchscreen interfaces we use today, the journey has been nothing short of revolutionary.\n\nIn the 1980s, graphical user interfaces (GUIs) introduced the concept of windows, icons, menus, and pointers (WIMP). This paradigm shift made computers more accessible to the general public and laid the foundation for modern interface design.\n\nToday, we're witnessing new trends in UI design that prioritize user experience, accessibility, and cross-platform consistency. Minimalism, dark mode, micro-interactions, and voice interfaces are just a few examples of how UI design continues to evolve to meet user needs and technological capabilities.",
+                category: "Design",
+                author: { name: "Sarah Designer", avatar: "SD" },
+                publishedAt: "2024-01-10",
+                readingTime: 7,
+                views: 456,
+                likes: 28,
+                comments: [],
+                status: "published",
+                featuredImage: null
+            },
+            {
+                id: 3,
+                title: "Remote Work Best Practices",
+                slug: "remote-work-best-practices",
+                excerpt: "Discover proven strategies for maintaining productivity while working remotely.",
+                content: "The shift to remote work has been one of the most significant changes in the modern workplace. While it offers flexibility and eliminates commute times, it also presents unique challenges that require thoughtful strategies to overcome.\n\nEffective communication is the cornerstone of successful remote work. This means being proactive in your communication, setting clear expectations, and using the right tools for different types of interactions. Video calls for complex discussions, instant messaging for quick questions, and email for formal communications.\n\nCreating a dedicated workspace is crucial for maintaining work-life balance and productivity. Even if you're working from a small apartment, designating a specific area for work helps create mental boundaries and signals to your brain when it's time to focus.\n\nTime management becomes even more critical when working remotely. Without the natural structure of an office environment, it's easy to either overwork or underwork. Establishing a routine, taking regular breaks, and setting boundaries between work and personal time are essential practices.",
+                category: "Productivity",
+                author: { name: "Mike Productivity", avatar: "MP" },
+                publishedAt: "2024-01-05",
+                readingTime: 4,
+                views: 189,
+                likes: 15,
+                comments: [],
+                status: "published",
+                featuredImage: null
+            }
+        ];
+        let nextPostId = 4;
+
+        // Utility Functions
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 3000);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function calculateReadingTime(text) {
+            const wordsPerMinute = 200;
+            const words = text.split(' ').length;
+            return Math.ceil(words / wordsPerMinute);
+        }
+
+        function generateSlug(title) {
+            return title
+                .toLowerCase()
+                .replace(/[^a-z0-9 -]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim();
+        }
+
+        // Navigation Functions
+        function showView(viewName) {
+            // Hide all views
+            const views = ['landing-page', 'dashboard', 'post-editor', 'post-view'];
+            views.forEach(view => {
+                document.getElementById(view).classList.add('hidden');
+            });
+            
+            // Show requested view
+            document.getElementById(viewName).classList.remove('hidden');
+            currentView = viewName;
+            
+            // Update auth button
+            updateAuthButton();
+        }
+
+        function showHome() {
+            if (currentUser) {
+                showDashboard();
+            } else {
+                showView('landing-page');
+            }
+        }
+
+        function showDashboard() {
+            showView('dashboard');
+            loadUserPosts();
+        }
+
+        function showCreatePost() {
+            showView('post-editor');
+            document.getElementById('editorTitle').textContent = 'Create New Post';
+            document.getElementById('postForm').reset();
+            updateWordCount();
+        }
+
+        function showEditPost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+            
+            showView('post-editor');
+            document.getElementById('editorTitle').textContent = 'Edit Post';
+            document.getElementById('postTitle').value = post.title;
+            document.getElementById('postExcerpt').value = post.excerpt || '';
+            document.getElementById('postContent').value = post.content;
+            document.getElementById('postCategory').value = post.category.toLowerCase().replace(' ', '-');
+            document.getElementById('postImage').value = post.featuredImage || '';
+            
+            // Store editing post ID
+            document.getElementById('postForm').dataset.editingId = postId;
+            updateWordCount();
+        }
+
+        function showPost(slug) {
+            const post = posts.find(p => p.slug === slug);
+            if (!post) return;
+            
+            showView('post-view');
+            renderPost(post);
+        }
+
+        function showSignIn() {
+            // Simulate sign in
+            currentUser = {
+                name: 'John Writer',
+                avatar: 'JW',
+                email: 'john@example.com'
+            };
+            
+            document.getElementById('userName').textContent = currentUser.name;
+            showToast('Welcome back! You are now signed in.');
+            showDashboard();
+        }
+
+        function signOut() {
+            currentUser = null;
+            showToast('You have been signed out.');
+            showView('landing-page');
+        }
+
+        function toggleAuth() {
+            if (currentUser) {
+                signOut();
+            } else {
+                showSignIn();
+            }
+        }
+
+        function updateAuthButton() {
+            const authBtn = document.getElementById('authBtn');
+            if (currentUser) {
+                authBtn.textContent = 'Sign Out';
+                authBtn.onclick = signOut;
+            } else {
+                authBtn.textContent = 'Sign In';
+                authBtn.onclick = showSignIn;
+            }
+        }
+
+        // Post Functions
+        function loadUserPosts() {
+            const userPosts = posts.filter(post => post.status === 'published' || currentUser);
+            const postsList = document.getElementById('userPostsList');
+            
+            if (userPosts.length === 0) {
+                postsList.innerHTML = `
+                    <div class="text-center py-16">
+                        <div class="text-6xl mb-4">📝</div>
+                        <h3 class="text-xl font-semibold mb-2">No posts yet</h3>
+                        <p class="text-gray-600 mb-6">Create your first post to get started!</p>
+                        <button onclick="showCreatePost()" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Create Your First Post
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            postsList.innerHTML = userPosts.map(post => `
+                <div class="flex items-center space-x-4 py-4 border-b hover:bg-gray-50 transition">
+                    ${post.featuredImage ? 
+                        `<img src="${post.featuredImage}" alt="${post.title}" class="w-24 h-16 object-cover rounded">` :
+                        '<div class="w-24 h-16 bg-gray-200 rounded flex items-center justify-center text-gray-400">📝</div>'
+                    }
+                    <div class="flex-1">
+                        <h3 class="font-semibold mb-1">${post.title}</h3>
+                        <div class="flex items-center space-x-4 text-sm text-gray-600">
+                            <span class="badge">${post.status}</span>
+                            <span>${post.views} views</span>
+                            <span>${post.comments.length} comments</span>
+                            <span>${post.likes} likes</span>
+                            <span>${formatDate(post.publishedAt)}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="showPost('${post.slug}')" class="btn btn-ghost">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button onclick="showEditPost(${post.id})" class="btn btn-ghost">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deletePost(${post.id})" class="btn btn-ghost" style="color: var(--error);">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function savePost(status) {
+            const form = document.getElementById('postForm');
+            const title = document.getElementById('postTitle').value.trim();
+            const excerpt = document.getElementById('postExcerpt').value.trim();
+            const content = document.getElementById('postContent').value.trim();
+            const category = document.getElementById('postCategory').value;
+            const featuredImage = document.getElementById('postImage').value.trim();
+            
+            if (!title || !content) {
+                showToast('Please fill in the title and content fields.', 'error');
+                return;
+            }
+            
+            const editingId = form.dataset.editingId;
+            const slug = generateSlug(title);
+            const readingTime = calculateReadingTime(content);
+            
+            const postData = {
+                title,
+                slug,
+                excerpt: excerpt || content.substring(0, 150) + '...',
+                content,
+                category: category ? category.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Uncategorized',
+                author: { name: currentUser.name, avatar: currentUser.avatar },
+                publishedAt: new Date().toISOString().split('T')[0],
+                readingTime,
+                views: 0,
+                likes: 0,
+                comments: [],
+                status,
+                featuredImage: featuredImage || null
+            };
+            
+            if (editingId) {
+                // Update existing post
+                const index = posts.findIndex(p => p.id === parseInt(editingId));
+                posts[index] = { ...posts[index], ...postData };
+                showToast('Post updated successfully!');
+            } else {
+                // Create new post
+                postData.id = nextPostId++;
+                posts.unshift(postData);
+                showToast(status === 'published' ? 'Post published successfully!' : 'Post saved as draft!');
+            }
+            
+            // Clear editing state
+            delete form.dataset.editingId;
+            
+            showDashboard();
+        }
+
+        function deletePost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+            
+            if (confirm(`Are you sure you want to delete "${post.title}"? This action cannot be undone.`)) {
+                posts = posts.filter(p => p.id !== postId);
+                showToast('Post deleted successfully!');
+                loadUserPosts();
+            }
+        }
+
+        function renderPost(post) {
+            const article = document.getElementById('postArticle');
+            article.innerHTML = `
+                <div class="mb-8">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="badge">${post.category}</div>
+                        <div class="flex items-center text-sm text-gray-600 space-x-4">
+                            <span><i class="fas fa-clock"></i> ${post.readingTime} min read</span>
+                            <span><i class="fas fa-eye"></i> ${post.views} views</span>
+                            <span>• ${formatDate(post.publishedAt)}</span>
+                        </div>
+                    </div>
+                    
+                    <h1 class="text-4xl font-bold mb-6">${post.title}</h1>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="avatar">${post.author.avatar}</div>
+                        <div>
+                            <div class="font-semibold">${post.author.name}</div>
+                            <div class="text-sm text-gray-600">Published author</div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${post.featuredImage ? 
+                    `<img src="${post.featuredImage}" alt="${post.title}" class="w-full h-64 md:h-96 object-cover rounded mb-8">` : ''
+                }
+                
+                <div class="prose mb-8">
+                    <div>${post.content.replace(/\n/g, '<br>')}</div>
+                </div>
+                
+                <div class="flex items-center justify-between pt-8 border-t">
+                    <div class="flex items-center space-x-6">
+                        <button onclick="likePost(${post.id})" class="btn btn-ghost text-gray-600 hover:text-red-500">
+                            <i class="fas fa-heart"></i>
+                            <span>${post.likes} likes</span>
+                        </button>
+                        
+                        <button class="btn btn-ghost text-gray-600 hover:text-blue-500">
+                            <i class="fas fa-comment"></i>
+                            <span>${post.comments.length} comments</span>
+                        </button>
+                        
+                        <button onclick="sharePost('${post.slug}')" class="btn btn-ghost text-gray-600 hover:text-green-500">
+                            <i class="fas fa-share"></i>
+                            <span>Share</span>
+                        </button>
+                    </div>
+                    
+                    <button class="btn btn-ghost text-gray-600 hover:text-primary">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Increment view count
+            post.views++;
+            
+            // Load comments
+            loadComments(post);
+        }
+
+        function likePost(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (post) {
+                post.likes++;
+                showToast('Post liked!');
+                // Re-render if we're viewing this post
+                if (currentView === 'post-view') {
+                    renderPost(post);
+                }
+            }
+        }
+
+        function sharePost(slug) {
+            const url = `${window.location.origin}#${slug}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check out this post on BlogCraft',
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(url);
+                showToast('Link copied to clipboard!');
+            }
+        }
+
+        // Comment Functions
+        function loadComments(post) {
+            const commentsList = document.getElementById('commentsList');
+            
+            if (post.comments.length === 0) {
+                commentsList.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="text-4xl mb-2">💬</div>
+                        <p class="text-gray-500">No comments yet. Be the first to share your thoughts!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            commentsList.innerHTML = post.comments.map(comment => `
+                <div class="flex space-x-3 mb-6">
+                    <div class="avatar">${comment.author.avatar}</div>
+                    <div class="flex-1">
+                        <div class="comment-content">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <span class="font-semibold text-sm">${comment.author.name}</span>
+                                <span class="text-sm text-gray-600">${formatDate(comment.createdAt)}</span>
+                            </div>
+                            <p class="text-sm leading-relaxed">${comment.content}</p>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4 text-sm mt-2">
+                            <button class="btn btn-ghost text-gray-500 hover:text-primary">
+                                <i class="fas fa-thumbs-up"></i>
+                                Like
+                            </button>
+                            <button class="btn btn-ghost text-gray-500 hover:text-primary">
+                                <i class="fas fa-reply"></i>
+                                Reply
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addComment() {
+            const currentPost = posts.find(p => p.slug === window.location.hash.substring(1));
+            if (!currentPost) return;
+            
+            const commentText = document.getElementById('newComment').value.trim();
+            if (!commentText) {
+                showToast('Please write a comment before posting.', 'error');
+                return;
+            }
+            
+            const comment = {
+                id: Date.now(),
+                content: commentText,
+                author: { name: currentUser ? currentUser.name : 'Anonymous', avatar: currentUser ? currentUser.avatar : 'A' },
+                createdAt: new Date().toISOString().split('T')[0],
+                likes: 0
+            };
+            
+            currentPost.comments.unshift(comment);
+            document.getElementById('newComment').value = '';
+            
+            showToast('Comment posted successfully!');
+            loadComments(currentPost);
+            renderPost(currentPost);
+        }
+
+        // Utility Functions
+        function scrollToFeatured() {
+            document.getElementById('featured').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateWordCount() {
+            const content = document.getElementById('postContent').value;
+            const words = content.trim() ? content.trim().split(' ').length : 0;
+            const readingTime = Math.ceil(words / 200);
+            document.getElementById('wordCount').textContent = `${words} words • ${readingTime} min read`;
+        }
+
+        function toggleMobileMenu() {
+            // Simple mobile menu toggle - could be expanded
+            alert('Mobile menu - implement as needed');
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up word count listener
+            document.getElementById('postContent').addEventListener('input', updateWordCount);
+            
+            // Handle hash navigation
+            function handleHashChange() {
+                const hash = window.location.hash.substring(1);
+                if (hash) {
+                    const post = posts.find(p => p.slug === hash);
+                    if (post) {
+                        showPost(hash);
+                        return;
+                    }
+                }
+                showHome();
+            }
+            
+            window.addEventListener('hashchange', handleHashChange);
+            handleHashChange(); // Handle initial load
+            
+            // Initialize view
+            showView('landing-page');
+        });
+    </script>
+</body>
+</html>
