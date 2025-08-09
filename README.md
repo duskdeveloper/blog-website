@@ -63,7 +63,7 @@ A modern, SEO-optimized blog platform with user authentication, content manageme
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/blogcraft.git
+   git clone https://github.com/duskdeveloper/blog-website.git
    cd blogcraft
    ```
 
